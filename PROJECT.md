@@ -36,6 +36,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 本轮独立交付已完成，无待自动执行任务。后续按真实需求另行确定，不自动恢复CM接轨、Map v1或provider/device扩展。
 
 ## Knowledge Map
+- Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.
 - Normative rules → [SPEC.md](SPEC.md)
 - Architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Decisions → [docs/DECISIONS.md](docs/DECISIONS.md)
