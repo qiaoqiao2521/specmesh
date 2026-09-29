@@ -17,9 +17,9 @@
 ## Constraints
 SPEC.md 仍是已发布规范；本次方向在活动计划中规划，不代表规范正文已经升级。模板只是脚手架，Map 为 derived，已审查 Markdown 为 asserted；只有 current area 注入 scoped memory，缓存可丢弃。未知、旧 done 和结构检查 pass 不得成为外部任务验收。
 
-不改 SPEC.md/全局标准链接。用户最新要求完成独立版4/4，按 S2 → S3 → R1 验收顺序推进，R1包含本仓已验收源码提交、独立发行和隔离安装；不覆盖已有入口或扩展到其他仓库。每张实现卡独占范围、一次实现与独立审查、至多两轮修正；S1 的第 3 次续修为用户显式追加授权，原次数保留。用户已追加授权由主助手完成所有SpecMesh进度并亲自实现；原尝试/失败不重置，按 S2 独立验收 → S3 → R1 串行推进。不用 Goal。
+不改 SPEC.md/全局标准链接。独立版 S1/S2/S3/R1 已接受；当时的授权、串行验收顺序、尝试上限与追加授权保留在[交付记录](plans/bounded-delivery/progress.md)，不构成新的待执行队列。不覆盖已有入口或扩展到其他仓库，不用 Goal。
 
-默认在主工作区推进，确需并行或测试隔离才使用独立目录/worktree；保留已有直接 push 授权，不一律要求 PR。已配置授权的 CBC/AGY 等可按任务承担实现/审查；S3 的单次模型调用范围已确认，尚未执行。产品验收是否需真实 provider 与开发执行者身份分开判断；发布/安装按对应卡授权处理。
+默认在主工作区推进，确需并行或测试隔离才使用独立目录/worktree；保留已授权任务的直接 push 路径，不一律要求 PR。已配置授权的 CBC/AGY 等可按任务承担实现/审查。S3 已完成单次模型调用并获独立接受，次数与失败历史见交付记录；后续模型调用、发布和安装按新任务授权处理。产品验收是否需真实 provider 与开发执行者身份分开判断。
 
 ## Current State
 
@@ -40,7 +40,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 - Normative rules → [SPEC.md](SPEC.md)
 - Architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Decisions → [docs/DECISIONS.md](docs/DECISIONS.md)
-- Active bounded delivery → [plan](plans/bounded-delivery/task_plan.md), [findings](plans/bounded-delivery/findings.md), [progress](plans/bounded-delivery/progress.md)
+- Completed bounded delivery → [plan](plans/bounded-delivery/task_plan.md), [findings](plans/bounded-delivery/findings.md), [progress](plans/bounded-delivery/progress.md)
 - Prior machine-port phases and evidence → [independent-plugin-port](plans/independent-plugin-port/task_plan.md)
 - Release alignment → [plans/release-alignment/](plans/release-alignment/)
 - Completed Map experiment → [plans/map-v0-spike/](plans/map-v0-spike/)
@@ -49,6 +49,6 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 - Plan status index → [plans/README.md](plans/README.md)
 
-## Approved next direction
+## Established direction
 
-2026-09-14 起以本仓 [bounded-delivery](plans/bounded-delivery/task_plan.md) 为活动交付计划。2026-09-15 确认长期独立方向：旧 SM/X IDs 仅用于追溯，CM 接轨不再是后续必做项。四个独立验收单元分母不变；旧 SM-P0/P1 的历史窄通过另列，不重复计数，不另建跨仓权威进度库。
+2026-09-14 开始的 [bounded-delivery](plans/bounded-delivery/task_plan.md) 已完成，是交付追溯入口。2026-09-15 确认长期独立方向：旧 SM/X IDs 仅用于追溯，CM 接轨不再是后续必做项。四个独立验收单元分母不变；旧 SM-P0/P1 的历史窄通过另列，不重复计数，不另建跨仓权威进度库。
