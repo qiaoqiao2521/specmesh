@@ -42,6 +42,12 @@ Do not introduce process or infrastructure unless the task actually requires it.
 
 Useful partial automation is acceptable; workflow completeness is not a success criterion.
 
+For delegation, state scope, ownership, dependencies, artifacts, verification and stop conditions in the existing plan.
+
+Choose review depth by behavior risk and coupling; avoid fixed agent counts or review rounds for simple changes.
+
+Before resolving conflicts, recover both intents and the common baseline; explain each choice and preserve ongoing work.
+
 Reuse host hooks for deterministic checks; verify event fields, scope, and repeated triggers before relying on them.
 
 Agents own contextual decisions and knowledge updates; hooks report or check specific events.
