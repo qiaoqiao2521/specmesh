@@ -34,7 +34,17 @@ For substantial work, maintain:
 
 Use the repository's existing development, testing, review, and validation mechanisms.
 
+Before extending capabilities, check existing tools, plugins, official capabilities, and relevant community implementations in proportion to the task.
+
+Prefer direct use, configuration, composition, or small patches; justify minimal adapters with verified gaps.
+
 Do not introduce process or infrastructure unless the task actually requires it.
+
+Useful partial automation is acceptable; workflow completeness is not a success criterion.
+
+Reuse host hooks for deterministic checks; verify event fields, scope, and repeated triggers before relying on them.
+
+Agents own contextual decisions and knowledge updates; hooks report or check specific events.
 
 Do not silently reinterpret or weaken user requirements.
 

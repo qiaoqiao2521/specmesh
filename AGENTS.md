@@ -13,6 +13,9 @@ architecture or decisions only for durable changes. Verify changes with unittest
 inputs change, rebuild/check the map. Publish reviewed source; copy SPEC.md to local user-level
 installations only after release verification. Never let generated graphs rewrite reviewed memory.
 
+Apply SPEC.md's reuse and process-cost rules. Prefer existing tools and verified upstream capabilities;
+accept useful partial automation. Host-specific hooks remain optional execution tools, not standard dependencies.
+
 ## 开发知识按需接入
 
 先读本项目上下文。遇到方案取舍、重复问题或跨项目经验时，读取 `KNOWLEDGE_WORKFLOW_CONFIG` 指定的路径说明；未设置时查 `~/.config/knowledge-workflow/paths.md`，再从映射的 Obsidian `Wiki/开发知识入口.md` 选相关页，读写规则见 `Wiki/开发协作接入.md`。配置或来源不可用时跳过，不阻塞开发；不默认扫全库。

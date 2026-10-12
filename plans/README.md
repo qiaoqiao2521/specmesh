@@ -1,6 +1,8 @@
 # Work index
 
-当前活动计划唯一入口：[bounded-delivery/task_plan.md](bounded-delivery/task_plan.md)；[状态](bounded-delivery/progress.md)；[依据与旧任务映射](bounded-delivery/findings.md)。
+当前准则维护入口：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[状态](reuse-principles-20261012/progress.md)。
+
+已完成独立交付：[bounded-delivery/task_plan.md](bounded-delivery/task_plan.md)；[状态](bounded-delivery/progress.md)；[依据与旧任务映射](bounded-delivery/findings.md)。
 
 2026-09-15：S1/S2/S3/R1 accepted（4/4），v1.3.0已发行、本机入口可用。见[R1最终验收](bounded-delivery/evidence/SM-P0.R1/acceptance.md)。本轮无待自动执行项。
 
