@@ -1,6 +1,6 @@
 # Work index
 
-当前准则维护入口：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[状态](reuse-principles-20261012/progress.md)。
+最近完成的准则维护：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[交付状态](reuse-principles-20261012/progress.md)。当前没有待自动执行项。
 
 已完成独立交付：[bounded-delivery/task_plan.md](bounded-delivery/task_plan.md)；[状态](bounded-delivery/progress.md)；[依据与旧任务映射](bounded-delivery/findings.md)。
 

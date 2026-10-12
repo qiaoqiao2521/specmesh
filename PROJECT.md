@@ -35,7 +35,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
-当前维护是[复用与流程成本准则](plans/reuse-principles-20261012/task_plan.md)，交付状态见[进度](plans/reuse-principles-20261012/progress.md)。此前独立交付已完成；本次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
+[复用与流程成本准则](plans/reuse-principles-20261012/task_plan.md)已完成，交付结果见[进度](plans/reuse-principles-20261012/progress.md)。当前没有待自动执行项；后续按真实需求选择，不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
 
 ## Knowledge Map
 - Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.

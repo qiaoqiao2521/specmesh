@@ -20,4 +20,4 @@ SpecMesh 规范源、模板与当前意图；CapMesh 原准则、生成清单及
 
 ## Status
 
-进行中，具体结果见 progress.md。
+已完成，具体结果见 progress.md；没有新增框架或 Hook 接入队列。
