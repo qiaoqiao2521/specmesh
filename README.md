@@ -7,7 +7,7 @@ SpecMesh 是一套轻量的项目连续性规范，帮助人和 Agent 跨会话�
 ## 开始
 
 - 阅读 [SpecMesh 规范 v1.1.0](SPEC.md)
-- 开发本仓库：从 [AGENTS.md](https://github.com/muqiao215/specmesh/blob/main/AGENTS.md) → [PROJECT.md](https://github.com/muqiao215/specmesh/blob/main/PROJECT.md) 进入
+- 开发本仓库：从 [AGENTS.md](https://github.com/qiaoqiao2521/specmesh/blob/main/AGENTS.md) → [PROJECT.md](https://github.com/qiaoqiao2521/specmesh/blob/main/PROJECT.md) 进入
 - 新项目可从 [templates/](templates/) 复制最小文件
 - 用 `SpecMesh init` 初始化，用 `SpecMesh check` 只读检查，用 `SpecMesh sync` 同步规范，用 `SpecMesh compact` 压缩膨胀的记忆
 
@@ -53,7 +53,7 @@ python3 scripts/map_v0.py focus "task description"
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-入口见 [`.specmesh/context.md`](https://github.com/muqiao215/specmesh/blob/main/.specmesh/context.md)。生成的 `.specmesh/cache/` 不进入 Git，也不属于项目事实源。
+入口见 [`.specmesh/context.md`](https://github.com/qiaoqiao2521/specmesh/blob/main/.specmesh/context.md)。生成的 `.specmesh/cache/` 不进入 Git，也不属于项目事实源。
 
 ### Area Overlay v0 结论（adopt / adapt / reject）
 
@@ -72,7 +72,7 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 The optional runtime provides source-bound project state, scoped dirty handoff and installation
 integrity checks. Python 3.11/3.12 on the declared POSIX profile are supported. CM, History and Orca
 are not required. S1–S3 have independent acceptance; publication status and evidence are in
-[bounded delivery](https://github.com/muqiao215/specmesh/blob/main/plans/bounded-delivery/progress.md) and [Releases](https://github.com/muqiao215/specmesh/releases).
+[bounded delivery](https://github.com/qiaoqiao2521/specmesh/blob/main/plans/bounded-delivery/progress.md) and [Releases](https://github.com/qiaoqiao2521/specmesh/releases).
 
 For a reproducible archive from committed release inputs, run:
 

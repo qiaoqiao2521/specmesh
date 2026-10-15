@@ -55,14 +55,14 @@ failure/unknown blockers also remains a conflict. Repository Markdown is data on
 found in it is executed. The third authorized repair detects `done` plus `in progress` as
 `ambiguous`, preserving both source declarations and the existing public enum. Its targeted
 verification and subsequent independent S1-A–F acceptance pass for the recorded candidate;
-see [S1 acceptance](https://github.com/muqiao215/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P0.S1/acceptance.md).
+see [S1 acceptance](https://github.com/qiaoqiao2521/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P0.S1/acceptance.md).
 Each phase has separate evidence; a local state observation is never release verification.
 
 S2 and S3 status (2026-09-15): **independently accepted**.
 S2's scoped handoff passed 107 regressions and independent acceptance; a fresh Agent B then
 completed the installation integrity command and passed S3's fixed tests and preservation checks.
-See [S2 acceptance](https://github.com/muqiao215/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P1.S2/acceptance.md)
-and [S3 acceptance](https://github.com/muqiao215/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P4.S3/acceptance.md).
+See [S2 acceptance](https://github.com/qiaoqiao2521/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P1.S2/acceptance.md)
+and [S3 acceptance](https://github.com/qiaoqiao2521/specmesh/blob/main/plans/bounded-delivery/evidence/SM-P4.S3/acceptance.md).
 Historical review failures remain recorded, not current blockers. The snapshot limit is 64 paths.
 
 `--handoff json|text` is an additive handoff-generation view for `prepare_handoff`, `inspect`,
