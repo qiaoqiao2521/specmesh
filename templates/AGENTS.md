@@ -44,7 +44,21 @@ Useful partial automation is acceptable; workflow completeness is not a success 
 
 For delegation, state scope, ownership, dependencies, artifacts, verification and stop conditions in the existing plan.
 
-Choose review depth by behavior risk and coupling; avoid fixed agent counts or review rounds for simple changes.
+Split substantial work into independently verifiable behavior slices with genuine blocking dependencies.
+When migration steps cannot stand alone, document integration acceptance.
+
+Prefer small interfaces that hide complexity and use existing project terminology.
+Retain adapters with real compatibility, security, protocol or isolation duties.
+
+Choose review depth by behavior risk and coupling.
+Report standards and requirements evidence separately without fixed agent counts or review rounds.
+
+State the requirements source and code baseline.
+For worktree delivery, include staged, unstaged and untracked changes; disclose exclusions.
+
+For bugs, observe the original symptom, minimise safely, test falsifiable hypotheses, and verify the fix against the original scenario.
+
+Add regression coverage when useful; disclose missing coverage without requiring TDD, fixed reproduction loops or unsafe hardware and production retries.
 
 Before resolving conflicts, recover both intents and the common baseline; explain each choice and preserve ongoing work.
 

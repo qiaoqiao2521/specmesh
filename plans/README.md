@@ -1,6 +1,8 @@
 # Work index
 
-最近完成的准则维护：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[交付状态](reuse-principles-20261012/progress.md)。当前没有待自动执行项。
+当前准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。本轮仅同步已授权的四项方法。
+
+此前准则维护：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[交付状态](reuse-principles-20261012/progress.md)。
 
 已完成独立交付：[bounded-delivery/task_plan.md](bounded-delivery/task_plan.md)；[状态](bounded-delivery/progress.md)；[依据与旧任务映射](bounded-delivery/findings.md)。
 

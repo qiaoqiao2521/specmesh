@@ -12,6 +12,8 @@
 
 2026-10-13 用户授权开始借鉴：将分工边界、按风险审查、双方意图冲突处理和真实方案推荐写入现有规范及模板。执行生命周期仍属于所选工具，不引入 Hermes 宿主依赖。
 
+2026-10-19 用户授权吸收 Matt Pocock skills 的四项工程方法：可验收切片、接口隐藏复杂度、规范与需求双维审查、原症状驱动诊断。方法进入现有规范与模板，保留项目术语、dirty 交付和按风险验证，不安装上游技能或接管执行流程。
+
 ## Non-goals
 不自建 Agent runtime、调度器、provider 管理、历史数据库或第四个总平台；不强制图基础设施，不自动把会话声明晋升为项目事实。本轮不做 Ops、多设备协作或跨仓生产切换。
 
@@ -19,7 +21,7 @@
 全新 Agent 从入口和明确交接材料即可找到意图、架构、决定与唯一下一步；保留既有未提交修改，拒绝过期/取消任务，以实际 diff、固定验证和 owner 接受证明交付。状态读取、dirty 交接、新 Agent 实际交付、独立发行分别验收；实验性检索仍需重复真实任务证据。
 
 ## Constraints
-当前规范源沿用 v1.1.0，2026-10-12 的复用与流程成本澄清已写入源码。已发布 v1.3.0 包保持原内容与身份，未重新发行；不能将当前源码与旧发行包视为相同文件集。模板只是脚手架，Map 为 derived，已审查 Markdown 为 asserted；只有 current area 注入 scoped memory，缓存可丢弃。未知、旧 done 和结构检查 pass 不得成为外部任务验收。
+当前规范源沿用 v1.1.0，复用、流程成本与本轮工程方法澄清写入源码。已发布 v1.3.0 包保持原内容与身份，未重新发行；不能将当前源码与旧发行包视为相同文件集。模板只是脚手架，Map 为 derived，已审查 Markdown 为 asserted；只有 current area 注入 scoped memory，缓存可丢弃。未知、旧 done 和结构检查 pass 不得成为外部任务验收。
 
 上次独立运行时交付中的“不改 SPEC.md/全局标准链接”是当次范围。2026-10-12 按新指令补充规范源与默认模板的复用、流程成本准则；本机已有标准软链接随源文件更新，不重建链接。已发布 v1.3.0 包、机器接口与历史验收保持原身份。独立版 S1/S2/S3/R1 已接受；当时的授权、串行验收顺序、尝试上限与追加授权保留在[交付记录](plans/bounded-delivery/progress.md)，不构成新的待执行队列。
 
@@ -37,7 +39,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
-[复用与流程成本准则](plans/reuse-principles-20261012/task_plan.md)已完成，交付结果见[进度](plans/reuse-principles-20261012/progress.md)。当前没有待自动执行项；后续按真实需求选择，不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
+[四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)正在进行，验证与整合状态见[进度](plans/mattpocock-methods-20261019/progress.md)。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
 
 ## Knowledge Map
 - Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.
@@ -45,6 +47,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 - Architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Decisions → [docs/DECISIONS.md](docs/DECISIONS.md)
 - Reuse and process-cost clarification → [SPEC section](SPEC.md#复用与流程成本), [task](plans/reuse-principles-20261012/task_plan.md)
+- Adapted engineering methods and pinned upstream sources → [adaptation notes](docs/ENGINEERING-PRACTICES.md), [task](plans/mattpocock-methods-20261019/task_plan.md)
 - Completed bounded delivery → [plan](plans/bounded-delivery/task_plan.md), [findings](plans/bounded-delivery/findings.md), [progress](plans/bounded-delivery/progress.md)
 - Prior machine-port phases and evidence → [independent-plugin-port](plans/independent-plugin-port/task_plan.md)
 - Release alignment → [plans/release-alignment/](plans/release-alignment/)
