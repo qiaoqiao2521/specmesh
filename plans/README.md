@@ -1,6 +1,6 @@
 # Work index
 
-当前准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。本轮仅同步已授权的四项方法。
+最近完成的准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。本轮已交付四项方法，当前没有待自动执行项。
 
 此前准则维护：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[交付状态](reuse-principles-20261012/progress.md)。
 

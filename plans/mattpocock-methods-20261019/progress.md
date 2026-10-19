@@ -2,14 +2,14 @@
 
 ## Current
 
-2026-10-19 四项方法已写入规范、模板与来源说明，本仓验证完成，待根 Codex 最终审阅和远端交付。规范版本仍为 v1.1.0，v1.3.0 包未变。
+2026-10-19 四项方法已写入规范、模板与来源说明，根独立审阅、验证和远端交付完成。规范版本仍为 v1.1.0，v1.3.0 包未变。
 
 ## Done
 
 - 核对干净基线、仓库身份、既有标准软链接和相关旧计划。
 - 更新 SPEC §4/§8、AGENTS/task_plan 模板、PROJECT、DECISIONS 与计划索引。
 - 来源说明绑定上游提交及 MIT 许可，明确 dirty 审查命令的覆盖范围。
-- `python3 -m unittest discover -s tests -p 'test_*.py' -v`：112 项通过，11.209s。未增加镜像文档的测试。
+- `python3 -m unittest discover -s tests -p 'test_*.py' -v`：112 项通过；根在合入远端维护更新后复跑，112项通过，11.360s。未增加镜像文档的测试。
 - 10 个变动 Markdown 文件共 48 个本地链接及锚点通过；`git diff --check` 通过。
 - `python3 scripts/map_v0.py build` 与 `check` 通过，缓存为 fresh；缓存保持未跟踪的派生数据。
 - 既有标准软链接仍指向本仓 SPEC.md，源 SHA-256 为 `86f3ff4a227bbc6615c5f1566243dd42fdcf084ff270c033df40f77d81704fa5`。源码已更新不代表旧发行包或全部下游仓库已更新。
@@ -18,7 +18,7 @@
 
 ## Remaining
 
-- 根 Codex 审阅本仓变更，串行提交推送并读回远端。
+本轮没有未完成的实现项。源码提交6451191已推送qiaoqiao2521/specmesh；GitHub contents API读回SPEC blob为88993324e6649500f698e761f6a8f2db63ebb12d，与本地一致。当前记录补齐交付状态，不改变已验收规范内容。
 
 ## Issues
 
@@ -28,4 +28,4 @@
 
 ## Next
 
-根 Codex 接续审阅与整合；worker 已完成本仓检查，未提交推送。此计划不授权安装上游技能、修改发行包或自动同步全部下游仓库。
+本轮完成。未来按实际任务使用现行规范；不自动安装上游技能、修改发行包或同步全部下游仓库。

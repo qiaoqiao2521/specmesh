@@ -39,7 +39,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
-[四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)正在进行，验证与整合状态见[进度](plans/mattpocock-methods-20261019/progress.md)。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
+[四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)已完成，验证与远端交付见[进度](plans/mattpocock-methods-20261019/progress.md)。当前没有待自动执行项。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
 
 ## Knowledge Map
 - Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.
