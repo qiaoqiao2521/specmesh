@@ -51,6 +51,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 - Completed bounded delivery → [plan](plans/bounded-delivery/task_plan.md), [findings](plans/bounded-delivery/findings.md), [progress](plans/bounded-delivery/progress.md)
 - Prior machine-port phases and evidence → [independent-plugin-port](plans/independent-plugin-port/task_plan.md)
 - Release alignment → [plans/release-alignment/](plans/release-alignment/)
+- Optional read-only evidence joins → [retrieval contract](docs/RETRIEVAL-CONTRACT.md)
 - Completed Map experiment → [plans/map-v0-spike/](plans/map-v0-spike/)
 - Completed Area experiment → [plans/area-overlay-v0/](plans/area-overlay-v0/)
 - Experimental configuration → [.specmesh/context.md](.specmesh/context.md)
