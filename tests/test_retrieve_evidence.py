@@ -1,5 +1,8 @@
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 from tempfile import TemporaryDirectory
 import unittest
 
@@ -103,6 +106,110 @@ class RetrieveEvidenceTests(unittest.TestCase):
         self.assertEqual(r["status"], "matched")
         self.assertEqual(r["items"][0]["outcome"], "failed")
         self.assertNotIn("stdout", r["items"][0])
+
+    def test_legacy_history_store_binding_stays_exact_without_namespace_translation(self):
+        fields = {"source": "codex", "store_id": "legacy-local-store",
+                  "session_id": "session-a", "index_revision": "indexed-v1"}
+        binding = {"schema": "specmesh-history-binding-v0", **self.scope, **fields}
+        packet = {"schema_version": "history.indexed-materials.v1", "authorization": "context_only",
+                  "binding": "index_revision", "redacted": True, "context_only": True, **fields,
+                  "items": [{**fields, "message_index": 3, "text_offset": 0,
+                             "redacted": True, "context_only": True,
+                             "locator": {"message_index": 3, "text_offset": 0,
+                                         "index_revision": fields["index_revision"]}}]}
+        path = self.external("legacy-materials.json", packet)
+        reviewed = self.external("legacy-binding.json", binding)
+        history = self.call(history_materials=path, history_binding=reviewed)["sources"]["history"]
+        self.assertEqual(history["status"], "matched")
+        self.assertEqual(history["items"][0]["store_id"], fields["store_id"])
+        self.external("legacy-binding.json", {**binding, "store_id": "different-linux-store"})
+        history = self.call(history_materials=path, history_binding=reviewed)["sources"]["history"]
+        self.assertEqual(history["status"], "unbound")
+        self.assertEqual(history["reason"], "history_source_or_revision_mismatch")
+
+    @unittest.skipUnless(os.environ.get("AGENTTRACEMESH_CHECKOUT"),
+                         "set AGENTTRACEMESH_CHECKOUT to run the optional native contract")
+    def test_optional_native_compress_recall_materials_join(self):
+        checkout = Path(os.environ["AGENTTRACEMESH_CHECKOUT"]).expanduser().resolve()
+        self.assertTrue((checkout / "history_core/__main__.py").is_file(),
+                        "AGENTTRACEMESH_CHECKOUT must name an existing source checkout")
+        source = self.root.parent / "native-source"
+        source.mkdir()
+        cache = self.root.parent / "native-cache"
+        cases = self.root.parent / "native-cases"
+        session = "specmesh-native-contract"
+        project = "/synthetic/specmesh-native-contract"
+        records = [{"type": "session_meta", "timestamp": "2026-11-21T00:00:00Z",
+                    "payload": {"id": session, "cwd": project}}]
+
+        def event(payload):
+            records.append({"type": "response_item",
+                            "timestamp": f"2026-11-21T00:00:{len(records):02d}Z",
+                            "payload": payload})
+
+        def message(role, text):
+            event({"type": "message", "role": role,
+                   "content": [{"type": "input_text" if role == "user" else "output_text",
+                                "text": text}]})
+
+        message("user", "请验证 Map v0 cache_is_fresh 修改内容后必须拒绝旧缓存。")
+        event({"type": "reasoning", "summary": [
+            {"type": "summary_text", "text": "PRIVATE_NATIVE_CONTRACT_SENTINEL"}]})
+        event({"type": "function_call", "name": "exec_command", "call_id": "check-cache",
+               "arguments": json.dumps({"cmd": "inspect-cache"})})
+        event({"type": "function_call_output", "call_id": "check-cache",
+               "output": "Exit code: 0\nOutput:\ncache inspected; behavior unchecked"})
+        message("assistant", "已经修好，全部通过。")
+        message("user", "不对，旧缓存仍然被接受，先停止，核对当前实现。")
+        transcript = source / "session.jsonl"
+        transcript.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in records) + "\n",
+                              encoding="utf-8")
+        original = transcript.read_bytes()
+
+        def native(*args, allow_partial=False):
+            completed = subprocess.run([sys.executable, "-B", "-m", "history_core", *args],
+                                       cwd=checkout, capture_output=True, text=True, timeout=30)
+            self.assertIn(completed.returncode, (0, 1) if allow_partial else (0,), completed.stderr)
+            result = json.loads(completed.stdout)
+            if completed.returncode == 1:
+                self.assertTrue(result.get("partial"), completed.stdout)
+            return result
+
+        selected_source = ["--source", "codex", "--source-path", str(source), "--data-dir", str(cache)]
+        native(*selected_source, "refresh")
+        compressed = native(*selected_source, "compress", session, "--save", "--case-dir", str(cases),
+                            allow_partial=True)
+        recalled = native("recall", "--directory", str(cases), "--project", project,
+                          "--query", "Map v0 cache_is_fresh", allow_partial=True)
+        case_id = compressed["cases"][0]["id"]
+        compact = next(item for item in recalled["items"] if item["id"] == case_id)
+        full = native("cases", "--directory", str(cases), "show", case_id)["case"]
+        evidence = {item["message_index"]: item for item in full["evidence"] if item["kind"] == "message"}
+        self.assertGreater(len(full["evidence"]), len(compact["evidence"]))
+        self.assertIn(5, evidence)  # Later user correction lies beyond the compact evidence list.
+        self.assertNotIn(1, evidence)  # Private reasoning keeps its slot without becoming evidence.
+        self.assertEqual(full["now"]["task_status"], "unknown")
+        first, correction = evidence[0], evidence[5]
+        materials = native(*selected_source, "materials", session, "--index-revision", first["index_revision"],
+                           "--message", f"{first['message_index']}:{first['text_offset']}",
+                           "--message", f"{correction['message_index']}:{correction['text_offset']}")
+        fields = ("source", "store_id", "session_id", "index_revision")
+        for key in fields:
+            self.assertEqual(materials[key], first[key], f"native {key} must survive compression to export")
+            self.assertEqual(correction[key], first[key])
+        binding = {"schema": "specmesh-history-binding-v0", **self.scope,
+                   **{key: first[key] for key in fields}}
+        path = self.external("native-materials.json", materials)
+        reviewed = self.external("native-binding.json", binding)
+        history = self.call(history_materials=path, history_binding=reviewed)["sources"]["history"]
+        self.assertEqual(history["status"], "matched")
+        self.assertEqual([item["message_index"] for item in history["items"]], [0, 5])
+        self.assertEqual([item["line_no"] for item in history["items"]], [2, 7])
+        self.assertFalse(history["live_verified"])
+        self.assertNotIn("PRIVATE_NATIVE_CONTRACT_SENTINEL", json.dumps(materials))
+        self.assertNotIn("text", history["items"][0])
+        self.assertNotIn("path", history["items"][0])
+        self.assertEqual(transcript.read_bytes(), original)
 
 
 if __name__ == "__main__":

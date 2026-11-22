@@ -1,3 +1,5 @@
 # Findings
 Map v0 resolves the real `spec://map-v0` example to the current cache function and test file. Historical plan paths found by name are candidates, not evidence that the plan's claims were independently verified.
 AgentTraceMesh already exports selected index-revision-bound materials. Reuse that native envelope with a separately reviewed binding rather than importing other source stores or indexing private transcripts. ControlMesh task outcomes remain separate from query status. Drive lookup is by explicit file binding; the CLI does not make live API calls or declare access.
+
+The native compression→recall→materials regression reproduced a store-identity mismatch before the AgentTraceMesh fix: compression used Linux/Windows while the public material export used `local`. The corrected exporter accepts the case's exact source/store/session/revision identity without rewriting it. SpecMesh's production validator is unchanged: old exports keep their original bindings, and mixed identities remain rejected. The test requires an explicit `AGENTTRACEMESH_CHECKOUT`; it does not add a runtime dependency or claim live/private-history acceptance.
