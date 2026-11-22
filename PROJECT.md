@@ -14,6 +14,8 @@
 
 2026-10-19 用户授权吸收 Matt Pocock skills 的四项工程方法：可验收切片、接口隐藏复杂度、规范与需求双维审查、原症状驱动诊断。方法进入现有规范与模板，保留项目术语、dirty 交付和按风险验证，不安装上游技能或接管执行流程。
 
+2026-11-22 用户确认增加面向人的架构入口：将架构作为仓库维护内容，用 SpecMesh 支持模块浏览、源码导航、检查证据与变更影响；Blender Harness 作为首个外部接入项目。复用已有 Map 与职责区域，不引入平台或后台服务。
+
 ## Non-goals
 不自建 Agent runtime、调度器、provider 管理、历史数据库或第四个总平台；不强制图基础设施，不自动把会话声明晋升为项目事实。本轮不做 Ops、多设备协作或跨仓生产切换。
 
@@ -39,12 +41,15 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
-[四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)已完成，验证与远端交付见[进度](plans/mattpocock-methods-20261019/progress.md)。当前没有待自动执行项。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
+本轮已实现[面向人的架构入口](plans/architecture-explorer/task_plan.md)：可复用静态视图、真实状态绑定、CI 产物与首个外部接入。验证、浏览器验收限制和远端运行入口见[进度](plans/architecture-explorer/progress.md)。后续扩展以维护者实际使用反馈为依据。
+
+[四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)已完成，验证与远端交付见[进度](plans/mattpocock-methods-20261019/progress.md)。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
 
 ## Knowledge Map
 - Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.
 - Normative rules → [SPEC.md](SPEC.md)
 - Architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Human architecture view → [Architecture Explorer](docs/ARCHITECTURE-EXPLORER.md)
 - Decisions → [docs/DECISIONS.md](docs/DECISIONS.md)
 - Reuse and process-cost clarification → [SPEC section](SPEC.md#复用与流程成本), [task](plans/reuse-principles-20261012/task_plan.md)
 - Adapted engineering methods and pinned upstream sources → [adaptation notes](docs/ENGINEERING-PRACTICES.md), [task](plans/mattpocock-methods-20261019/task_plan.md)

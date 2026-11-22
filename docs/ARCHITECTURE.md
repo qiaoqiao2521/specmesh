@@ -9,6 +9,19 @@ scripts/map_v0.py derives a deterministic, budgeted graph from code/Git and revi
 output and is never authoritative or tracked. Area ambiguity or pending rebind suppresses scoped
 memory; malformed authoritative declarations fail loudly.
 
+`scripts/build_architecture.py` adds an optional human view over the same Map. Each project owns
+reviewed module labels, responsibilities, paths, explicit relationships and check commands in
+`architecture/architecture.json`; `architecture/explorer.html` is the reusable offline viewer.
+The builder validates current paths, symbols and area gates, optionally executes declared checks,
+and writes disposable HTML/JSON under `dist/architecture/`. Check evidence binds the actual Git
+revision, dirty content and build definitions. It never writes project memory, infers business
+relationships or treats an absent check as passed. Explicit downstream impact is a review
+candidate set, not proof of behavioral failure. See [Architecture Explorer](ARCHITECTURE-EXPLORER.md).
+
+CI stores static snapshots as Actions artifacts. Adopting private projects pin the public tool
+revision and keep their own model/results in their repository. No hosted service, public Pages
+deployment or change to the released independent runtime is required.
+
 External viewers and agent runners may consume these files through independent interfaces.
 No CM, History or Orca integration is required for development, acceptance or release. Markdown adoption
 installs SPEC.md as the user's standard and uses templates only where a controlled project's actual

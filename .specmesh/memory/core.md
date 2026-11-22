@@ -15,6 +15,10 @@ SpecMesh Map v0 shares addresses and retrieval across code structure and project
 - relation: implemented_by | from: `spec://map-v0` | to: `code://scripts/map_v0.py` | provenance: asserted | scope: area:map-derivation
 - relation: verified_by | from: `spec://map-v0` | to: `code://tests/test_map_v0.py` | provenance: asserted | scope: area:map-derivation
 - relation: documented_by | from: `spec://map-v0` | to: `code://SPEC.md` | provenance: asserted | scope: area:map-derivation
+- relation: defines | from: `mem://core` | to: `spec://architecture-explorer` | provenance: asserted | scope: area:architecture-explorer
+- relation: implemented_by | from: `spec://architecture-explorer` | to: `code://scripts/build_architecture.py` | provenance: asserted | scope: area:architecture-explorer
+- relation: displayed_by | from: `spec://architecture-explorer` | to: `code://architecture/explorer.html` | provenance: asserted | scope: area:architecture-explorer
+- relation: verified_by | from: `spec://architecture-explorer` | to: `code://tests/test_build_architecture.py` | provenance: asserted | scope: area:architecture-explorer
 
 ## Revisit when
 

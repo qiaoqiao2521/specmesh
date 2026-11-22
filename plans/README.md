@@ -1,6 +1,8 @@
 # Work index
 
-最近完成的准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。本轮已交付四项方法，当前没有待自动执行项。
+当前用户授权：[面向人的 Architecture Explorer](architecture-explorer/task_plan.md)；[验证与交付状态](architecture-explorer/progress.md)。通用工具在 SpecMesh，首个外部接入为 Blender Harness。
+
+最近完成的准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。该轮已交付四项方法。
 
 此前准则维护：[reuse-principles-20261012/task_plan.md](reuse-principles-20261012/task_plan.md)；[交付状态](reuse-principles-20261012/progress.md)。
 

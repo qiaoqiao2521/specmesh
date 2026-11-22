@@ -1,5 +1,15 @@
 # Decisions
 
+## 2026-11-22 — 为人提供可持续维护的架构视图
+
+决定：按用户新授权，在 SpecMesh 源码中实现通用静态 Architecture Explorer，并为 Blender Harness 接入真实模块声明和 CI 构建。它补足人浏览职责、源码、检查证据和变更影响的入口；原来的机器可读 Map 和独立运行时继续保留各自用途。
+
+职责和业务关系由项目 JSON 明确声明，当前代码与符号由已有 Map 派生，HTML 负责展示。复用 `code://`、`mem://`、`spec://` 和 current area 门禁；不建第二份索引，不自动推断业务契约或迁移旧路径。检查结果绑定实际来源；未运行保持 unknown，旧证据保持 stale，结构失败保持 blocked。
+
+采用原生 HTML/SVG 和固定层级顺序；产物内嵌数据，离线可开。提交触发 CI 重建并保存 artifact；私有项目不自动发布公共页面。检查执行只发生在显式 `--run-checks`，影响范围只表示需要复核的下游。当前实现是可选源码工具，不扩大规范、运行时发行或历史任务验收。
+
+使用说明见[架构入口](ARCHITECTURE-EXPLORER.md)，验收见[交付记录](../plans/architecture-explorer/progress.md)。
+
 ## 2026-10-19 — 工程方法融入原规范，执行体系保持独立
 
 决定：按用户授权，将 `code-review`、`codebase-design`、`to-tickets`、`diagnosing-bugs` 的可迁移方法写入 SPEC §4/§8 与默认模板。固定来源、许可证及适配差异见[工程方法来源](ENGINEERING-PRACTICES.md)。

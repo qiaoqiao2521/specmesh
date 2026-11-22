@@ -15,3 +15,12 @@ areas:
       - code://.specmesh/context.md
     read_next:
       - SPEC.md
+  - id: area:architecture-explorer
+    purpose: Present current architecture and bounded verification evidence to people.
+    anchors:
+      - code://scripts/build_architecture.py
+      - code://architecture/explorer.html
+      - code://tests/test_build_architecture.py
+    read_next:
+      - docs/ARCHITECTURE-EXPLORER.md
+      - architecture/architecture.json

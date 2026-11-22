@@ -1,0 +1,80 @@
+{
+  "schema": "specmesh-architecture-v1",
+  "project": {
+    "id": "qiaoqiao2521/specmesh",
+    "title": "SpecMesh",
+    "subtitle": "从项目记忆到真实代码，让人看懂正在维护的系统。",
+    "repository_url": "https://github.com/qiaoqiao2521/specmesh"
+  },
+  "layers": [
+    {"id": "context", "label": "项目上下文"},
+    {"id": "understand", "label": "读取与理解"},
+    {"id": "use", "label": "查看与交付"}
+  ],
+  "modules": [
+    {
+      "id": "project-memory", "title": "项目记忆", "layer": "context", "order": 0,
+      "summary": "保留经过审查的意图、决定和职责关系；告诉接手者为什么这样做。",
+      "area": "area:memory-authority",
+      "paths": ["PROJECT.md", "AGENTS.md", "SPEC.md", "docs/ARCHITECTURE.md", "docs/DECISIONS.md", ".specmesh/memory/core.md", ".specmesh/repo-areas.v0.yaml"],
+      "checks": ["area-tests"]
+    },
+    {
+      "id": "code-map", "title": "代码与职责地图", "layer": "understand", "order": 0,
+      "summary": "从当前文件提取结构，用 code、memory、spec 地址和区域锚点连接职责。",
+      "area": "area:map-derivation",
+      "paths": ["scripts/map_v0.py", ".specmesh/context.md"],
+      "anchors": ["code://scripts/map_v0.py#build_graph", "code://scripts/map_v0.py#cache_is_fresh"],
+      "checks": ["map-tests", "area-tests"]
+    },
+    {
+      "id": "project-state", "title": "当前项目状态", "layer": "understand", "order": 1,
+      "summary": "按需读取项目声明与工作区快照，保留内容、来源和未解决问题。",
+      "paths": ["specmesh_port/service.py", "specmesh_port/project_state.py", "specmesh_port/snapshot.py", "specmesh_port/git_reader.py"],
+      "checks": ["state-tests"]
+    },
+    {
+      "id": "evidence", "title": "历史与外部证据", "layer": "understand", "order": 2,
+      "summary": "把明确选择的历史材料、执行回执与网盘引用绑定到当前需求；保留未核验边界。",
+      "paths": ["scripts/retrieve_evidence.py", "scripts/drive_evidence.py", "docs/RETRIEVAL-CONTRACT.md"],
+      "checks": ["retrieval-tests"]
+    },
+    {
+      "id": "architecture-explorer", "title": "可视化架构", "layer": "use", "order": 0,
+      "summary": "面向人的静态页面：看职责、跳源码、查检查结果，判断改动可能影响哪里。",
+      "area": "area:architecture-explorer",
+      "paths": ["scripts/build_architecture.py", "architecture/explorer.html", "architecture/architecture.json"],
+      "checks": ["architecture-tests"]
+    },
+    {
+      "id": "handoff", "title": "带上下文的交接", "layer": "use", "order": 1,
+      "summary": "保留未提交改动与可信任务范围；接手前重新核对，不把交接当作执行授权。",
+      "paths": ["specmesh_port/handoff.py", "specmesh_port/__main__.py", "specmesh_port/contracts"],
+      "checks": ["handoff-tests"]
+    },
+    {
+      "id": "distribution", "title": "独立发行与校验", "layer": "use", "order": 2,
+      "summary": "构建明确文件范围的运行时包，核对安装内容与真实源码身份。",
+      "paths": ["scripts/build_release.py", "scripts/smoke_release.py", "scripts/verify_install.py"],
+      "checks": ["distribution-tests"]
+    }
+  ],
+  "relations": [
+    {"from": "project-memory", "to": "code-map", "kind": "contract", "label": "职责与锚点", "authority": "asserted", "evidence": [".specmesh/memory/core.md", ".specmesh/repo-areas.v0.yaml"]},
+    {"from": "project-memory", "to": "project-state", "kind": "input", "label": "已审查声明", "authority": "asserted", "evidence": ["docs/ARCHITECTURE.md", "specmesh_port/project_state.py"]},
+    {"from": "code-map", "to": "evidence", "kind": "input", "label": "当前代码职责", "authority": "asserted", "evidence": ["scripts/retrieve_evidence.py"]},
+    {"from": "code-map", "to": "architecture-explorer", "kind": "input", "label": "结构与区域状态", "authority": "asserted", "evidence": ["scripts/build_architecture.py"]},
+    {"from": "project-state", "to": "handoff", "kind": "input", "label": "状态与内容快照", "authority": "asserted", "evidence": ["specmesh_port/handoff.py"]},
+    {"from": "project-state", "to": "distribution", "kind": "delivery", "label": "独立运行时", "authority": "asserted", "evidence": ["scripts/build_release.py"]},
+    {"from": "handoff", "to": "distribution", "kind": "delivery", "label": "运行时交接能力", "authority": "asserted", "evidence": ["scripts/build_release.py"]}
+  ],
+  "checks": [
+    {"id": "map-tests", "label": "代码地图回归", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_map_v0.py"], "timeout_seconds": 90},
+    {"id": "area-tests", "label": "区域锚点与权威边界", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_area_overlay.py"], "timeout_seconds": 90},
+    {"id": "state-tests", "label": "项目状态与机器接口", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_machine_port.py"], "timeout_seconds": 90},
+    {"id": "retrieval-tests", "label": "本地证据绑定回归（原生 History 另验）", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_retrieve_evidence.py"], "timeout_seconds": 90},
+    {"id": "architecture-tests", "label": "架构构建与状态边界", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_build_architecture.py"], "timeout_seconds": 90},
+    {"id": "handoff-tests", "label": "交接与变更保留", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_handoff.py"], "timeout_seconds": 90},
+    {"id": "distribution-tests", "label": "发行包与安装完整性", "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_distribution.py"], "timeout_seconds": 90}
+  ]
+}
