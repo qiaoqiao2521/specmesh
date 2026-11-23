@@ -615,10 +615,10 @@ def _area_haystack(area_id: str, record: dict[str, object]) -> str:
     return " ".join(parts)
 
 
-def _area_section(
+def _select_areas(
     resolution: dict[str, dict[str, object]], query_terms: set[str], cap: int
-) -> str:
-    blocks: list[str] = []
+) -> tuple[str, list[str]]:
+    blocks: list[tuple[str, str]] = []
     for area_id in sorted(resolution):
         record = resolution[area_id]
         if record.get("superseded_by"):
@@ -634,28 +634,46 @@ def _area_section(
                 lines.append(f"  read_next: {', '.join(str(path) for path in record['read_next'])}\n")
         else:
             lines = [f"- {area_id} [{record['state']}] {record['reason']}\n"]
-        blocks.append("".join(lines))
+        blocks.append((area_id, "".join(lines)))
     if not blocks:
-        return ""
+        return "", []
     # Area blocks are atomic: a truncated block (read_next without its purpose
     # line) carries no meaning, so a block that does not fit is skipped whole,
     # and the header is only emitted when at least one block fits. The cap
     # keeps area guidance from displacing the ranked map itself.
     kept: list[str] = []
-    for block in blocks:
+    area_ids: list[str] = []
+    for area_id, block in blocks:
         if len(tokenize("## areas\n" + "".join(kept) + block)) > cap:
             continue
         kept.append(block)
-    return "## areas\n" + "".join(kept) if kept else ""
+        area_ids.append(area_id)
+    return ("## areas\n" + "".join(kept) if kept else ""), area_ids
 
 
-def render_view(graph: dict[str, object], budget: int, query: str | None = None) -> str:
+def _area_section(resolution: dict[str, dict[str, object]], query_terms: set[str], cap: int) -> str:
+    return _select_areas(resolution, query_terms, cap)[0]
+
+
+def edge_key(edge: dict[str, object]) -> str:
+    """A stable relationship identity shared by text, HTML, and revision diffs."""
+    return json.dumps([edge["from"], edge["relation"], edge["to"], edge["provenance"], edge.get("scope")],
+                      ensure_ascii=False, separators=(",", ":"))
+
+
+def select_view(graph: dict[str, object], budget: int, query: str | None = None) -> dict[str, object]:
+    """Select one budgeted, gated Map view; text and HTML use this same result."""
+    if type(budget) is not int or budget < 1:
+        raise ValueError("Map budget must be a positive integer")
     scores = _rank(graph, query)
     mode = "focus" if query else "global"
     header = f"# SpecMesh Map v0 ({mode})\n"
     if query:
         header += f"task: {query}\n"
     header += f"source: {graph['source_fingerprint']}\n"
+    header_tokens = len(tokenize(header))
+    if header_tokens > budget:
+        raise ValueError("Map budget is too small for the source and query header")
     output = header
     injectable = _injectable_areas(graph)
     gated_nodes = _gated_memory_nodes(graph, injectable)
@@ -663,7 +681,7 @@ def render_view(graph: dict[str, object], budget: int, query: str | None = None)
     query_terms = {term.casefold() for term in tokenize(query or "") if term.isalnum()}
     # The section is built before nodes so its tokens can be reserved; nodes
     # would otherwise consume the whole budget and starve the area guidance.
-    section = _area_section(resolution, query_terms, budget // 3)
+    section, area_ids = _select_areas(resolution, query_terms, min(budget // 3, budget - header_tokens))
     section_tokens = len(tokenize(section)) if section else 0
     nodes = sorted(graph["nodes"], key=lambda node: (-scores.get(node["id"], 0.0), node["id"]))
     by_id = {node["id"]: node for node in nodes}
@@ -676,6 +694,7 @@ def render_view(graph: dict[str, object], budget: int, query: str | None = None)
                     and (edge.get("scope") is None or edge["scope"] in injectable)):
                 configurations[edge["from"]].add(edge["to"])
     selected: set[str] = set()
+    selected_nodes: list[dict[str, object]] = []
     for node in nodes:
         if node["id"] in gated_nodes or node["id"] in selected:
             continue
@@ -687,7 +706,9 @@ def render_view(graph: dict[str, object], budget: int, query: str | None = None)
             continue
         output += line
         selected.update(item["id"] for item in bundle)
+        selected_nodes.extend(bundle)
     output += section
+    selected_edges: list[dict[str, object]] = []
     for edge in graph["edges"]:
         scope = edge.get("scope")
         if scope is not None and scope not in injectable:
@@ -698,7 +719,17 @@ def render_view(graph: dict[str, object], budget: int, query: str | None = None)
         if len(tokenize(output + line)) > budget:
             break
         output += line
-    return output
+        selected_edges.append(edge)
+    return {"mode": mode, "query": query or None, "budget_tokens": budget,
+            "node_ids": [node["id"] for node in selected_nodes],
+            "edge_keys": [edge_key(edge) for edge in selected_edges], "area_ids": area_ids,
+            "nodes": selected_nodes, "edges": selected_edges,
+            "areas": {area_id: resolution[area_id] for area_id in area_ids},
+            "token_count": len(tokenize(output)), "text": output}
+
+
+def render_view(graph: dict[str, object], budget: int, query: str | None = None) -> str:
+    return str(select_view(graph, budget, query)["text"])
 
 
 def _fresh_graph(root: Path) -> dict[str, object]:

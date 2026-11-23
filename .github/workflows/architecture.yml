@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
-      - name: Build the architecture page and run declared checks
+      - name: Build native Map and focused view with shared check results
         id: build
         continue-on-error: true
         env:
@@ -37,7 +37,13 @@ jobs:
           if [[ "$BASE_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$BASE_SHA" != 0000000000000000000000000000000000000000 ]]; then
             args+=(--base-ref "$BASE_SHA")
           fi
-          python3 -B scripts/build_architecture.py --root . --output dist/architecture --run-checks "${args[@]}"
+          build_exit=0
+          python3 -B scripts/build_architecture.py --root . --output dist/architecture --run-checks "${args[@]}" || build_exit=$?
+          if [[ -f dist/architecture/status.json ]]; then
+            python3 -B scripts/build_architecture.py --root . --output dist/architecture/focus-map \
+              --results dist/architecture/status.json --focus "map source" --budget 1000 "${args[@]}" || build_exit=$?
+          fi
+          exit "$build_exit"
       - name: Save the offline page and evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -146,6 +146,38 @@ class MapV0Tests(unittest.TestCase):
         self.assertLessEqual(len(map_v0.tokenize(focus_view)), 80)
         self.assertIn("code://src/app.py#normalize", focus_view)
 
+    def test_structured_selection_preserves_existing_global_and_focus_text(self):
+        graph = map_v0.build_graph(self.root)
+        cases = [(120, None, ["code://src/app.py", "code://src/helper.py", "code://tests/test_app.py",
+                              "code://src/helper.py#helper", "code://src/app.py#normalize", "spec://demo",
+                              "code://src/helper.py#Session"]),
+                 (80, "normalize test", ["code://src/app.py", "code://tests/test_app.py",
+                                         "code://src/app.py#normalize", "code://src/helper.py"])]
+        by_id = {node["id"]: node for node in graph["nodes"]}
+        for budget, query, expected_ids in cases:
+            with self.subTest(query=query):
+                selection = map_v0.select_view(graph, budget, query)
+                expected = "# SpecMesh Map v0 (" + ("focus" if query else "global") + ")\n"
+                if query:
+                    expected += f"task: {query}\n"
+                expected += f"source: {graph['source_fingerprint']}\n"
+                expected += "".join(f"- {key} [{by_id[key]['kind']}; {by_id[key]['authority']}]\n" for key in expected_ids)
+                self.assertEqual(selection["node_ids"], expected_ids)
+                self.assertEqual(selection["edges"], [])
+                self.assertEqual(selection["text"], expected)
+                self.assertEqual(map_v0.render_view(graph, budget, query), expected)
+        full = map_v0.select_view(graph, 1000, "normalize")
+        self.assertEqual(full["edge_keys"], [map_v0.edge_key(edge) for edge in full["edges"]])
+        self.assertTrue(any(edge["provenance"] == "asserted" for edge in full["edges"]))
+        self.assertTrue(any(edge["provenance"] == "derived" for edge in full["edges"]))
+
+    def test_selection_rejects_budget_too_small_for_source_and_query(self):
+        graph = map_v0.build_graph(self.root)
+        with self.assertRaisesRegex(ValueError, "too small"):
+            map_v0.select_view(graph, 1)
+        with self.assertRaisesRegex(ValueError, "too small"):
+            map_v0.select_view(graph, 20, "stage " * 30)
+
     def test_cache_json_is_canonical_and_contains_no_timestamp(self):
         payload = map_v0.canonical_json(map_v0.build_graph(self.root))
         parsed = json.loads(payload)

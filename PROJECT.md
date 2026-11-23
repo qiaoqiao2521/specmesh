@@ -16,6 +16,8 @@
 
 2026-11-22 用户确认增加面向人的架构入口：将架构作为仓库维护内容，用 SpecMesh 支持模块浏览、源码导航、检查证据与变更影响；Blender Harness 作为首个外部接入项目。复用已有 Map 与职责区域，不引入平台或后台服务。
 
+2026-11-23 用户澄清：SpecMesh 负责代码索引、图谱与演化流程，前端应是直接消费已有结构、可由脚本快速生成的展示组件。已授权补齐原生 Map 全局/聚焦和修订对比，同步 Blender Harness 后直接推送 main，再由用户验收页面。额外架构 JSON 只作可选展示与业务补充，不成为另一份必填拓扑。
+
 ## Non-goals
 不自建 Agent runtime、调度器、provider 管理、历史数据库或第四个总平台；不强制图基础设施，不自动把会话声明晋升为项目事实。本轮不做 Ops、多设备协作或跨仓生产切换。
 
@@ -41,7 +43,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
-本轮已实现[面向人的架构入口](plans/architecture-explorer/task_plan.md)：可复用静态视图、真实状态绑定、CI 产物与首个外部接入。验证、浏览器验收限制和远端运行入口见[进度](plans/architecture-explorer/progress.md)。后续扩展以维护者实际使用反馈为依据。
+正在补齐[面向人的架构入口](plans/architecture-explorer/task_plan.md)的原生图谱数据接入、脚本聚焦与修订对比，并同步 Blender Harness。上一版手写模块视图保留为可选业务补充。验证、远端交付和待用户验收项见[进度](plans/architecture-explorer/progress.md)。
 
 [四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)已完成，验证与远端交付见[进度](plans/mattpocock-methods-20261019/progress.md)。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
 

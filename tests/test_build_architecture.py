@@ -155,6 +155,9 @@ class ArchitectureExplorerTests(unittest.TestCase):
         self.assertEqual(after["modules"][0]["status"], "blocked")
         self.assertFalse(after["relations"][0]["active"])
         self.assertFalse(any(e.get("scope") == "area:input" for e in after["map"]["relations"]))
+        self.assertNotIn("spec://input", {node["id"] for node in after["map"]["nodes"]})
+        self.assertNotIn("spec://input", after["map"]["selection"]["node_ids"])
+        self.assertNotIn("code://src/input.py", {node["id"] for node in after["map"]["nodes"]})
 
     def test_map_config_inputs_must_be_local_and_manifest_bound_before_replaying_results(self):
         self.init_git()
@@ -313,6 +316,143 @@ class ArchitectureExplorerTests(unittest.TestCase):
         view = self.build(base_ref="not-a-real-ref")
         self.assertFalse(view["changes"]["available"])
         self.assertEqual(view["changes"]["reason"], "base_ref_unavailable")
+        self.assertFalse(view["evolution"]["available"])
+        self.assertEqual(view["evolution"]["reason"], "base_ref_unavailable")
+        self.assertEqual(view["evolution"]["files"], {"added": [], "removed": [], "modified": []})
+
+    def test_native_map_needs_no_model_and_uses_only_a_real_origin_for_links(self):
+        self.model_path.unlink()
+        self.init_git()
+        local = self.build()
+        self.assertFalse(local["model"]["available"])
+        self.assertEqual(local["modules"], [])
+        self.assertEqual(local["checks"], [])
+        self.assertEqual(local["project"]["title"], self.root.name)
+        self.assertIsNone(local["project"]["repository_url"])
+        self.assertTrue(all(node.get("url") is None for node in local["map"]["nodes"]))
+        self.git("remote", "add", "origin", "git@github.com:example/native-project.git")
+        linked = self.build()
+        node = next(node for node in linked["map"]["nodes"] if node["id"] == "code://src/input.py#read_input")
+        self.assertEqual(linked["project"]["repository_url"], "https://github.com/example/native-project")
+        self.assertEqual(node["url"], "https://github.com/example/native-project/blob/" + self.git("rev-parse", "HEAD") + "/src/input.py")
+        self.assertEqual(node["authority"], "derived")
+        self.assertTrue(any(edge["relation"] == "defines" for edge in linked["map"]["edges"]))
+        with self.assertRaises(FileNotFoundError):
+            explorer.build_architecture(self.root, "missing.json", template_path=self.template)
+        self.save_model()
+        self.assertEqual(self.build(no_model=True)["modules"], [])
+
+    def test_focus_selection_reuses_map_and_does_not_invalidate_check_replay(self):
+        self.init_git()
+        original = self.build(run_checks=True)
+        previous = self.save_results(original)
+        focused = self.build(results_path=previous, focus="read_input", budget=150, base_ref="HEAD")
+        self.assertEqual(focused["checks"], original["checks"])
+        self.assertEqual(focused["check_binding"], original["check_binding"])
+        expected = explorer.map_v0.select_view(explorer._graph(self.root), 150, "read_input")
+        self.assertEqual(focused["map"]["selection"]["node_ids"], expected["node_ids"])
+        self.assertEqual(focused["map"]["selection"]["edge_keys"], expected["edge_keys"])
+        self.assertLessEqual(focused["map"]["selection"]["token_count"], 150)
+        self.assertTrue(focused["evolution"]["available"])
+        self.assertEqual(focused["evolution"]["nodes"], {"added": [], "removed": [], "changed": []})
+
+    def test_evolution_reads_two_real_commits_and_reports_source_area_and_record_changes(self):
+        sentinel = self.base / "BASELINE_MUST_NOT_EXECUTE"
+        self.write("danger.py", f"from pathlib import Path\nPath({str(sentinel)!r}).write_text('executed')\n")
+        self.write("removed.py", "def removed():\n    return 0\n")
+        self.write("PROJECT.md", "# Original intent\n")
+        self.write("docs/DECISIONS.md", "# Old decision\n")
+        self.write("plans/current/task_plan.md", "# Initial plan\n")
+        self.write(".specmesh/repo-areas.v0.yaml", "areas:\n  - id: area:output\n    purpose: Output\n"
+                   "    anchors:\n      - code://src/output.py#render_output\n")
+        self.init_git()
+        self.git("remote", "add", "origin", "https://github.com/example/project.git")
+        base = self.git("rev-parse", "HEAD")
+        self.write("src/input.py", "def read_input():\n    return 9\n")
+        (self.root / "src/output.py").rename(self.root / "src/renamed.py")
+        (self.root / "removed.py").unlink()
+        self.write("added.py", "def added():\n    return 3\n")
+        self.write("PROJECT.md", "# Updated intent\n")
+        (self.root / "docs/DECISIONS.md").unlink()
+        self.write("plans/current/task_plan.md", "# Updated plan\n")
+        self.git("add", "-A")
+        self.git("commit", "-qm", "evolve sources and intent")
+        current = self.git("rev-parse", "HEAD")
+        evolution = self.build(no_model=True, base_ref=base)["evolution"]
+        self.assertTrue(evolution["available"], evolution["reason"])
+        self.assertEqual((evolution["base_revision"], evolution["current_revision"]), (base, current))
+        self.assertFalse(evolution["dirty"])
+        removed = {node["id"]: node for node in evolution["nodes"]["removed"]}
+        added = {node["id"]: node for node in evolution["nodes"]["added"]}
+        changed = {node["id"]: node for node in evolution["nodes"]["changed"]}
+        self.assertIn("code://src/output.py#render_output", removed)
+        self.assertIn("code://src/renamed.py#render_output", added)
+        self.assertIn(base, removed["code://src/output.py"]["url"])
+        self.assertEqual(changed["code://src/input.py#read_input"]["fields"], ["source_sha256"])
+        self.assertEqual(changed["code://src/input.py#read_input"]["change_basis"], "containing_source_file")
+        self.assertTrue(evolution["edges"]["added"])
+        self.assertTrue(evolution["edges"]["removed"])
+        area = evolution["areas"]["changed"][0]
+        self.assertEqual((area["before"]["state"], area["after"]["state"]), ("current", "candidate_rebind"))
+        self.assertIn("removed.py", evolution["files"]["removed"])
+        self.assertIn("added.py", evolution["files"]["added"])
+        self.assertIn("src/input.py", evolution["files"]["modified"])
+        records = {record["path"]: record for record in evolution["records"]}
+        self.assertEqual(records["PROJECT.md"]["kind"], "project")
+        self.assertIn(current, records["PROJECT.md"]["url"])
+        self.assertEqual(records["docs/DECISIONS.md"]["change"], "removed")
+        self.assertIsNone(records["docs/DECISIONS.md"]["url"])
+        self.assertIn(base, records["docs/DECISIONS.md"]["base_url"])
+        self.assertEqual(records["plans/current/task_plan.md"]["kind"], "plan")
+        self.assertFalse(sentinel.exists())
+        self.assertEqual(self.git("status", "--porcelain"), "")
+
+    def test_evolution_reports_missing_git_objects_instead_of_empty_changes(self):
+        self.init_git()
+        base = self.git("rev-parse", "HEAD")
+        old_blob = self.git("rev-parse", "HEAD:src/input.py")
+        self.write("src/input.py", "def read_input():\n    return 8\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "replace old blob")
+        (self.root / ".git/objects" / old_blob[:2] / old_blob[2:]).unlink()
+        result = self.build(base_ref=base)["evolution"]
+        self.assertFalse(result["available"])
+        self.assertEqual(result["reason"], "baseline_objects_unavailable")
+        self.assertEqual(result["nodes"], {"added": [], "removed": [], "changed": []})
+
+    def test_evolution_refuses_escaping_git_tree_symlinks_and_sparse_worktrees(self):
+        outside = self.base / "outside-memory.md"
+        outside.write_text("synthetic outside content\n")
+        context = self.root / ".specmesh/context.md"
+        context.parent.mkdir(parents=True)
+        context.symlink_to(outside)
+        self.init_git()
+        base = self.git("rev-parse", "HEAD")
+        context.unlink()
+        self.write(".specmesh/context.md", "memory_root: .specmesh/memory/core.md\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "use repository context")
+        result = self.build(base_ref=base)["evolution"]
+        self.assertFalse(result["available"])
+        self.assertEqual(result["reason"], "baseline_input_unavailable")
+        self.git("update-index", "--skip-worktree", "src/output.py")
+        self.git("update-index", "--assume-unchanged", "src/output.py")
+        self.assertIn("s src/output.py", self.git("ls-files", "-v"))
+        result = self.build(base_ref="HEAD")["evolution"]
+        self.assertFalse(result["available"])
+        self.assertEqual(result["reason"], "current_snapshot_incomplete")
+
+    def test_cli_without_model_builds_native_focus_and_explicit_missing_model_fails(self):
+        self.model_path.unlink()
+        output = self.base / "native-cli"
+        with patch.object(explorer, "ENGINE_ROOT", self.template.parents[1]), \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(explorer.main(["--root", str(self.root), "--output", str(output),
+                                            "--focus", "read_input", "--budget", "150"]), 0)
+            payload = json.loads((output / "architecture.json").read_text())
+            self.assertEqual(payload["map"]["selection"]["mode"], "focus")
+            self.assertEqual(payload["modules"], [])
+            self.assertEqual(explorer.main(["--root", str(self.root), "--model", "absent.json", "--check"]), 2)
 
     def test_cli_check_does_not_execute_or_write_and_failed_run_still_emits_page(self):
         self.model["checks"][0]["command"] = [sys.executable, "-c", "raise SystemExit(4)"]

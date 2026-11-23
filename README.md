@@ -38,18 +38,22 @@ SpecMesh 不是 Skill、Harness、Agent 编排系统或 Spec-Driven Development 
 
 ## 面向人的架构入口
 
-Architecture Explorer 将仓库中的模块声明与真实代码、检查结果组织成可搜索、可点击的静态页面。布局固定，提交后由 GitHub Actions 重建；日常查看不调用 AI 重画，也不需要后台服务。
+Architecture Explorer 直接把现有 Map 的代码、符号、记忆关系与职责区域变成可搜索、可点击的静态页面。全局和任务聚焦共用原来的选择逻辑，修订对比显示节点、关系与区域的变化。没有额外架构 JSON 的仓库也可生成；项目自己的业务模块与检查声明作为可选补充。
 
 在 [Actions → Architecture Explorer](https://github.com/qiaoqiao2521/specmesh/actions/workflows/architecture.yml) 下载一次运行的产物，解压后打开 `index.html`。也可以从完整源码 checkout 构建：
 
 ```bash
 python3 -B scripts/build_architecture.py --root . --run-checks
 # 打开 dist/architecture/index.html
+
+# 聚焦现有图谱，同时查看相对指定修订的变化。
+python3 -B scripts/build_architecture.py --root . \
+  --focus "map source" --base-ref HEAD^ --output dist/focus
 ```
 
-不加 `--run-checks` 时只生成页面，检查保持未验证。通过、失败、未验证、证据过期和来源失效分别显示；点击模块可看每项检查具体证明了什么。业务关系由维护者声明，变更影响表示待复核范围。工具属于可选源码入口，不改变 v1.3.0 运行时 ZIP 或规范版本。
+不加 `--run-checks` 时只生成页面，检查保持未验证。派生代码关系与审阅声明保留各自来源，图谱节点存在不代表功能通过。演化对比要求本地可读的 Git 基线；缺失对象或不完整检出明确显示不可用。工具属于可选源码入口，不改变 v1.3.0 运行时 ZIP 或规范版本。
 
-接入其他项目只需维护架构 JSON 并调用同一构建器；详见 [使用与维护](https://github.com/qiaoqiao2521/specmesh/blob/main/docs/ARCHITECTURE-EXPLORER.md)。
+接入其他项目可直接调用同一构建器；业务模块、检查和展示配置按需添加。详见 [使用与维护](https://github.com/qiaoqiao2521/specmesh/blob/main/docs/ARCHITECTURE-EXPLORER.md)。
 
 ## Map v0 实验
 

@@ -9,14 +9,23 @@ scripts/map_v0.py derives a deterministic, budgeted graph from code/Git and revi
 output and is never authoritative or tracked. Area ambiguity or pending rebind suppresses scoped
 memory; malformed authoritative declarations fail loudly.
 
-`scripts/build_architecture.py` adds an optional human view over the same Map. Each project owns
-reviewed module labels, responsibilities, paths, explicit relationships and check commands in
-`architecture/architecture.json`; `architecture/explorer.html` is the reusable offline viewer.
-The builder validates current paths, symbols and area gates, optionally executes declared checks,
-and writes disposable HTML/JSON under `dist/architecture/`. Check evidence binds the actual Git
-revision, dirty content and build definitions. It never writes project memory, infers business
-relationships or treats an absent check as passed. Explicit downstream impact is a review
-candidate set, not proof of behavioral failure. See [Architecture Explorer](ARCHITECTURE-EXPLORER.md).
+`scripts/build_architecture.py` presents the existing Map directly through
+`architecture/explorer.html`. Structured selection and the text renderer share one Map selection
+function, including authority, area gating, ranking and budgets. The HTML receives native node
+identities and edges, and distinguishes the complete eligible graph from its displayed selection.
+An optional `architecture/architecture.json` adds project labels, reviewed business modules and
+check commands; it is not required to open a code graph and does not replace the Map topology.
+
+With an explicit Git baseline, the builder uses the current Map engine on a read-only temporary
+snapshot of committed files, without executing baseline code or changing the working tree. It
+compares nodes, edges, source content and area resolution and links changed intent/decision/plan
+documents. Missing objects or incomplete checkouts make comparison unavailable, not an empty diff.
+Source-file hash changes do not prove that every function in that file changed.
+
+The builder writes disposable HTML/JSON under `dist/architecture/`. Check evidence binds the actual
+Git revision, dirty content and build definitions. View query/budget/base selection does not rerun
+checks or turn a node into a verified function. Existing business impact remains a review candidate
+set. No generated view writes project memory. See [Architecture Explorer](ARCHITECTURE-EXPLORER.md).
 
 CI stores static snapshots as Actions artifacts. Adopting private projects pin the public tool
 revision and keep their own model/results in their repository. No hosted service, public Pages
