@@ -79,6 +79,21 @@ class MapV0Tests(unittest.TestCase):
         rust_nodes = [node for node in graph["nodes"] if node["id"].startswith("code://main.rs")]
         self.assertEqual(rust_nodes, [{"id": "code://main.rs", "kind": "file", "name": "main.rs", "authority": "derived"}])
 
+    def test_git_path_quoting_does_not_change_source_manifest(self):
+        paths = ["目录/启动工具.sh", 'notes/quoted"name.txt', "notes/line\nbreak.txt"]
+        for relative in paths:
+            self._write(relative, "synthetic source\n")
+        before = map_v0.source_manifest(self.root)
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        subprocess.run(["git", "-C", str(self.root), "config", "core.quotePath", "true"], check=True)
+        subprocess.run(["git", "-C", str(self.root), "add", "."], check=True)
+        self.assertEqual(map_v0.source_manifest(self.root), before)
+        self._write("未跟踪 文档.md", "synthetic untracked source\n")
+        graph = map_v0.build_graph(self.root)
+        ids = {node["id"] for node in graph["nodes"]}
+        for relative in paths + ["未跟踪 文档.md"]:
+            self.assertIn("code://" + relative, ids)
+
     def test_focus_configuration_bundle_obeys_scope_authority_and_budget(self):
         nodes = [{"id": address, "name": address, "kind": "file", "authority": "derived"}
                  for address in ("code://entry.py", "code://noise.py", "code://settings.toml")]

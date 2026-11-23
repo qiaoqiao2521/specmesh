@@ -57,7 +57,7 @@ def file_sha256(path: Path) -> str:
 
 def _git_files(root: Path) -> list[str] | None:
     result = subprocess.run(
-        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
         cwd=root,
         text=True,
         stdout=subprocess.PIPE,
@@ -66,7 +66,9 @@ def _git_files(root: Path) -> list[str] | None:
     )
     if result.returncode != 0:
         return None
-    return [line for line in result.stdout.splitlines() if line]
+    # NUL framing preserves Unicode, quotes and embedded line breaks verbatim;
+    # Git's human-readable quoting must never change a source path's identity.
+    return [path for path in result.stdout.split("\0") if path]
 
 
 def participating_files(root: Path) -> list[Path]:

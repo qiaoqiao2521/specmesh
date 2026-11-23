@@ -407,6 +407,26 @@ class ArchitectureExplorerTests(unittest.TestCase):
         self.assertFalse(sentinel.exists())
         self.assertEqual(self.git("status", "--porcelain"), "")
 
+    def test_evolution_preserves_unicode_and_quoted_path_identity(self):
+        paths = ["目录/启动工具.sh", "docs/空格 文档.md", 'notes/quoted"name.txt']
+        for relative in paths:
+            self.write(relative, "synthetic unchanged source\n")
+        self.init_git()
+        self.git("config", "core.quotePath", "true")
+        base = self.git("rev-parse", "HEAD")
+        self.write("src/input.py", "def read_input():\n    return 8\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "change one source only")
+        result = self.build(base_ref=base)
+        self.assertTrue(result["evolution"]["available"], result["evolution"]["reason"])
+        self.assertEqual(result["evolution"]["files"],
+                         {"added": [], "removed": [], "modified": ["src/input.py"]})
+        self.assertEqual(result["evolution"]["nodes"]["removed"], [])
+        self.assertEqual(result["evolution"]["nodes"]["added"], [])
+        self.assertTrue({"code://" + path for path in paths}.issubset(
+            {node["id"] for node in result["map"]["nodes"]}))
+        self.assertEqual(self.git("status", "--porcelain"), "")
+
     def test_evolution_reports_missing_git_objects_instead_of_empty_changes(self):
         self.init_git()
         base = self.git("rev-parse", "HEAD")
