@@ -18,6 +18,8 @@
 
 2026-11-23 用户澄清：SpecMesh 负责代码索引、图谱与演化流程，前端应是直接消费已有结构、可由脚本快速生成的展示组件。已授权补齐原生 Map 全局/聚焦和修订对比，同步 Blender Harness 后直接推送 main，再由用户验收页面。额外架构 JSON 只作可选展示与业务补充，不成为另一份必填拓扑。
 
+2026-11-26 用户授权 TraceMesh 按需上下文缺口恢复落地，并同步 SpecMesh。补充渐进检索与证据使用规则：任务文件保留当前执行状态，SpecMesh 保留仓库权威与索引，TraceMesh 提供按需历史证据；信息足够时继续执行，不建立重复的记忆或调度系统。
+
 ## Non-goals
 不自建 Agent runtime、调度器、provider 管理、历史数据库或第四个总平台；不强制图基础设施，不自动把会话声明晋升为项目事实。本轮不做 Ops、多设备协作或跨仓生产切换。
 
@@ -43,6 +45,8 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 
 ## Current Priority
 
+本轮同步[按需上下文缺口恢复](plans/context-gap-20261126/task_plan.md)：规范、默认模板与现有检索链路对齐，保持独立运行时和已发布包身份。验证与交付范围见[进度](plans/context-gap-20261126/progress.md)。
+
 正在补齐[面向人的架构入口](plans/architecture-explorer/task_plan.md)的原生图谱数据接入、脚本聚焦与修订对比，并同步 Blender Harness。上一版手写模块视图保留为可选业务补充。验证、远端交付和待用户验收项见[进度](plans/architecture-explorer/progress.md)。
 
 [四项工程方法同步](plans/mattpocock-methods-20261019/task_plan.md)已完成，验证与远端交付见[进度](plans/mattpocock-methods-20261019/progress.md)。此前[复用与流程成本准则](plans/reuse-principles-20261012/progress.md)已完成。此次不自动恢复 CM 接轨、Map v1 或 provider/device 扩展。
@@ -50,6 +54,7 @@ S1累计尝试3；S2累计实现尝试5；S3全新AGY B调用1、修正0，真�
 ## Knowledge Map
 - Optional external experience in planning/closeout → [OPTIONAL-KNOWLEDGE](docs/OPTIONAL-KNOWLEDGE.md); project facts and independent runtime remain local to this repository.
 - Normative rules → [SPEC.md](SPEC.md)
+- Context-gap recovery and responsibility boundaries → [standard](SPEC.md#按需补齐上下文), [optional retrieval workflow](docs/RETRIEVAL-CONTRACT.md#call-only-for-a-concrete-gap)
 - Architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Human architecture view → [Architecture Explorer](docs/ARCHITECTURE-EXPLORER.md)
 - Decisions → [docs/DECISIONS.md](docs/DECISIONS.md)

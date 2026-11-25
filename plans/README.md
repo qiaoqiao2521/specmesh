@@ -1,5 +1,7 @@
 # Work index
 
+本轮用户授权：[按需上下文缺口恢复同步](context-gap-20261126/task_plan.md)；[验证与交付状态](context-gap-20261126/progress.md)。规范与既有检索链路同步，独立运行时不增加 TraceMesh 依赖。
+
 当前用户授权：[面向人的 Architecture Explorer](architecture-explorer/task_plan.md)；[验证与交付状态](architecture-explorer/progress.md)。通用工具在 SpecMesh，首个外部接入为 Blender Harness。
 
 最近完成的准则维护：[mattpocock-methods-20261019/task_plan.md](mattpocock-methods-20261019/task_plan.md)；[验证与整合状态](mattpocock-methods-20261019/progress.md)。该轮已交付四项方法。

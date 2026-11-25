@@ -183,6 +183,31 @@ class RetrieveEvidenceTests(unittest.TestCase):
                           "--query", "Map v0 cache_is_fresh", allow_partial=True)
         case_id = compressed["cases"][0]["id"]
         compact = next(item for item in recalled["items"] if item["id"] == case_id)
+        request = self.external("context-request.json", {
+            "schema_version": "history.context-request.v1",
+            "task": "Map v0 cache_is_fresh",
+            "next_action": "核对当前实现后修复缓存失效",
+            "project": project,
+            "state_revision": "cache-review-1",
+            "needs": [{"id": "prior-correction", "kind": "history", "status": "missing",
+                       "question": "之前 cache_is_fresh 的完成声明为何被用户纠正？",
+                       "reason": "需要先定位原始纠正，避免重复采用被否决的修复。",
+                       "query": "Map v0 cache_is_fresh",
+                       "required_evidence": "同一会话原需求和后续用户纠正的精确修订与消息位置"}],
+        })
+        recovery_args = ["context", "--request", str(request), "--retrieve",
+                         "--directory", str(cases), *selected_source]
+        recovery = native(*recovery_args)
+        self.assertEqual(recovery["status"], "needs_review")
+        self.assertEqual(recovery["retrieval_calls"], 1)
+        self.assertEqual(recovery["authorization"], "context_only")
+        selected = next(item for item in recovery["gaps"][0]["candidates"] if item["id"] == case_id)
+        self.assertEqual(selected["current_verification"], "not_performed")
+        receipt = self.external("context-receipt.json", recovery)
+        repeated = native(*recovery_args, "--previous", str(receipt))
+        self.assertEqual(repeated["retrieval_calls"], 0)
+        self.assertTrue(repeated["gaps"][0]["reused"])
+        self.assertEqual(repeated["status"], "needs_review")
         full = native("cases", "--directory", str(cases), "show", case_id)["case"]
         evidence = {item["message_index"]: item for item in full["evidence"] if item["kind"] == "message"}
         self.assertGreater(len(full["evidence"]), len(compact["evidence"]))
@@ -201,6 +226,9 @@ class RetrieveEvidenceTests(unittest.TestCase):
                    **{key: first[key] for key in fields}}
         path = self.external("native-materials.json", materials)
         reviewed = self.external("native-binding.json", binding)
+        rejected = self.call(history_materials=receipt, history_binding=reviewed)["sources"]["history"]
+        self.assertEqual(rejected["status"], "failed")
+        self.assertEqual(rejected["reason"], "history_materials_schema_invalid")
         history = self.call(history_materials=path, history_binding=reviewed)["sources"]["history"]
         self.assertEqual(history["status"], "matched")
         self.assertEqual([item["message_index"] for item in history["items"]], [0, 5])

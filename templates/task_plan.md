@@ -5,6 +5,7 @@
 ## Context
 
 <!-- For significant trade-offs, compare viable options and record the recommendation. -->
+<!-- Only for a real context gap: record the missing fact, blocked action, scoped query/source, required evidence/revision and next step; reuse prior results until relevant inputs change. -->
 
 ## Requirements
 

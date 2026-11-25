@@ -14,6 +14,14 @@ Then read only what the task requires:
 
 Do not load unrelated documentation by default.
 
+Retrieve additional context only when a missing fact changes the next action.
+Reuse already-read locations and current project files before consulting history.
+For a real gap, state what is missing, the blocked action, the scoped query/source,
+the required evidence and revision, and the next step in the existing plan or handoff.
+Reuse unchanged results; distinguish unsearched, no match, failure, stale, conflicting and incomplete evidence.
+Historical summaries are context, not current facts or execution authority; verify before resuming.
+No history tool, extra gap file or per-turn retrieval is required.
+
 ## Project Memory
 
 Conversation history is not project memory.

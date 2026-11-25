@@ -9,6 +9,35 @@ python3 scripts/retrieve_evidence.py --project qiaoqiao2521/specmesh \
 
 The CLI rebuilds the existing Map v0 graph in memory. It identifies the spec by exact ID or a lexical name match, requires current scoped anchors, follows asserted code/test relations and ranks matching symbols inside those files. Plans matched by name are candidates only. Unrecognized or ambiguous requests never silently pick another spec; use `--spec` and `--area` to clarify. Supply `--revision` as a full commit for external joins. This is a caller-supplied target identity, not proof that a working tree equals that commit; the actual input state has its own source fingerprint.
 
+## Call only for a concrete gap
+
+Follow [the progressive context rule](../SPEC.md#按需补齐上下文): when the current
+request, project files and selected code already answer the next decision, do
+not invoke retrieval. This command is an explicit evidence reader, not a
+per-turn hook or an automatic completeness check.
+
+Keep the gap in the existing task or handoff: the missing fact, the blocked
+action, the scoped source/query, the evidence and revision required, and the
+next action after verification. For example, before changing a cache rule,
+identify the missing current implementation/test binding; query the existing
+Map with the exact spec/area. If the remaining gap concerns why a prior route
+was rejected, query TraceMesh for that decision and inspect the original
+correction. A current execution failure needs current observations, not merely
+a historical successful command.
+
+Reuse already selected locations and results while the gap, query scope and
+source revision are unchanged. After a miss or failure, choose a justified new
+query/source or report the remaining input; do not repeat an identical lookup
+without a reason to expect new evidence. The calling Agent owns that decision
+and retry budget. SpecMesh adds no retrieval ledger or execution state machine.
+
+`matched` means the selected references passed this reader's binding checks;
+it does not resolve the task's question or authorize an action. Inspect original
+evidence, preserve incomplete/contradictory/stale states, then return the verified
+next step to the existing plan or handoff. Derived summaries and aborted fragments
+are not verified memory. History cannot override current instructions, and this
+reader cannot establish live execution success.
+
 ## External evidence is opt-in
 
 All bindings match the exact lower-case `owner/repository`, `spec_uri`, `area` and full `revision`. Keep private binding files outside the source tree. The retrieval CLI does not start a native history crawl, read Drive bodies, use credentials, write back to another tool, or promote external context to reviewed project memory.
@@ -31,6 +60,44 @@ python3 -m history_core --source codex --source-path "$SOURCE_PATH" \
 python3 -m history_core recall --directory "$CASE_DIR" --query 'Map v0 cache_is_fresh'
 python3 -m history_core cases --directory "$CASE_DIR" show "$CASE_ID"
 ```
+
+### Starting from a context gap
+
+AgentTraceMesh's `context` command accepts a caller-prepared
+`history.context-request.v1` request. Name the current task/next action, project,
+state revision and concrete needs rather than passing an entire transcript.
+It routes declared needs; `no_gap` does not prove semantic completeness. The
+default call only plans routes:
+
+```sh
+python3 -m history_core context --request "$GAP_REQUEST"
+```
+
+For an explicitly chosen local history source/case catalogue, opt into the
+existing bounded reader:
+
+```sh
+python3 -m history_core context --request "$GAP_REQUEST" \
+  --retrieve --directory "$CASE_DIR" --source codex \
+  --source-path "$SOURCE_PATH" --data-dir "$CACHE_DIR" > "$CONTEXT_RESULT"
+```
+
+No gap means no retrieval even with `--retrieve`. A later invocation may supply
+`--previous "$CONTEXT_RESULT"` to reuse the prior receipt and suppress an
+unchanged lookup; write its result to a different file. This optional receipt is
+not a new SpecMesh memory store. The caller's `state_revision` must change after
+relevant evidence or the selected source state changes; receipt reuse does not
+discover live recording updates. Never rewrite old evidence revisions to make a
+stale locator look current. Project and tool gaps remain routes for the
+calling Agent to handle with current source/tools; history hits remain
+`needs_review`, not resolved facts.
+
+A context receipt is also **not** a native materials packet. Inspect each selected
+case's full evidence and then follow steps 1–4 below. Keep the separate reviewed
+binding and original source/store/session/revision identities; do not relabel a
+receipt or summary to make the materials validator accept it. See the
+[TraceMesh context usage](https://github.com/qiaoqiao2521/AgentTraceMesh/blob/main/docs/context-gap.md)
+for its request contract; SpecMesh does not maintain a second copy of that schema.
 
 1. Select the case by its returned ID and read its full `evidence` using
    `cases show`. Recall displays at most three evidence entries; later user
@@ -88,5 +155,12 @@ AGENTTRACEMESH_CHECKOUT=/path/to/AgentTraceMesh \
 Without that variable the test is skipped. This adds no runtime dependency or
 joint release requirement. The CLI exit status only describes query execution;
 consumers must still inspect each source's `status` and verification fields.
+The current native test also exercises `context` and receipt reuse, rejects a
+context receipt passed as materials, then accepts the selected native fragments
+with their original binding. Use a checkout that includes the context command.
 
-This is a separate, optional CLI in the source tree. No changes to the versioned standard or existing machine interfaces. No vector index or RAG service is needed to run it; measure real paraphrase misses before adding one.
+This remains a separate, optional CLI in the source tree. The context-gap
+guidance clarifies the standard and calling workflow; it does not change this
+reader's wire format, the existing machine interfaces or the released runtime.
+No vector index or RAG service is needed to run it; measure real paraphrase
+misses before adding one.
